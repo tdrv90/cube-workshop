@@ -1,8 +1,6 @@
 const { v4 } = require('uuid');
 const { saveCube } = require('../controllers/database');
 
-const databaseFile = path.join(__dirname, '..', 'config/database.json');
-
 class Cube {
     constructor(name, description, imageUrl, difficulty) {
         this.id = v4(),
@@ -13,7 +11,7 @@ class Cube {
     }
 
     // saveCube
-    save() {
+    save(callback) {
         const newCube = {
             id: this.id,
             name: this.name,
@@ -22,7 +20,7 @@ class Cube {
             difficulty: this.difficulty
         };
 
-        saveCube(newCube);
+        saveCube(newCube, callback);
     }
 }
 
