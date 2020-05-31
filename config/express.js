@@ -4,7 +4,7 @@ const handlebars = require('express-handlebars');
 module.exports = (app) => {
     // body parser
     app.use(express.json());
-    app.use(express.urlencoded());
+    app.use(express.urlencoded({ extended: true }));
 
     // handlebars engine
     app.engine('.hbs', handlebars({
