@@ -1,15 +1,13 @@
-const { getAllCubes } = require('../controllers/cubes');
-const { getCube } = require('../controllers/database');
+const { getAllCubes, getCube } = require('../controllers/cubes');
 const Cube = require('../models/cube');
 
 module.exports = (app) => {
-    app.get('/', (req, res) => {
-        getAllCubes((cubes) => {
-            res.render('index', {
-                title: 'Cube Workshop',
-                cubes
-            });
-        })
+    app.get('/', async (req, res) => {
+        const cubes = await getAllCubes();
+        res.render('index', {
+            title: 'Cube Workshop',
+            cubes
+        });
     })
 
     app.get('/about', (req, res) => {
@@ -32,21 +30,21 @@ module.exports = (app) => {
             difficultyLevel
         } = req.body;
 
-        const cube = new Cube(name, description, imageUrl, difficultyLevel);
+        const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel });
 
-        cube.save(() => {
+        cube.save((err) => {
+            if (err) console.error(err);
             res.redirect('/');
         })
     })
 
-    app.get('/details/:id', (req, res) => {
+    app.get('/details/:id', async (req, res) => {
+        const cube = await getCube(req.params.id)
 
-        getCube(req.params.id, (cube) => {
-            res.render('details', {
-                title: 'Cube Details',
-                ...cube
-            });
-        })
+        res.render('details', {
+            title: 'Cube Details',
+            ...cube
+        });
     })
 
     app.get('*', (req, res) => {
