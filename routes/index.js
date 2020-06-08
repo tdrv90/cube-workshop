@@ -1,4 +1,4 @@
-const { getAllCubes, getCube, updateCube } = require('../controllers/cubes');
+const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
 const { getAccessories } = require('../controllers/accessories');
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
@@ -41,7 +41,7 @@ module.exports = (app) => {
     })
 
     app.get('/details/:id', async (req, res) => {
-        const cube = await getCube(req.params.id)
+        const cube = await getCubeWithAccessories(req.params.id)
 
         res.render('details', {
             title: 'Cube Details',
