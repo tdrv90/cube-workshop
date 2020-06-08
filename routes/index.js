@@ -70,15 +70,22 @@ module.exports = (app) => {
     })
 
     app.get('/attach/accessory/:id', async (req, res) => {
-        const cube = await getCube(req.params.id)
+        const cube = await getCube(req.params.id);
         const accessories = await getAccessories();
+
+        const cubeAccessories = cube.accessories.map(acc => acc._id.valueOf().toString())
+
+        const notAttachedAccessories = accessories.filter(acc => {
+            return !cubeAccessories.includes(acc._id.valueOf().toString());
+        });
+
 
         const canAttachAccessory = cube.accessories.length !== accessories.length && accessories.length > 0
 
         res.render('attachAccessory', {
             title: 'Attach accessory',
             ...cube,
-            accessories,
+            accessories: notAttachedAccessories,
             canAttachAccessory
         })
     })
