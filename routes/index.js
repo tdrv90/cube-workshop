@@ -1,4 +1,5 @@
-const { getAllCubes, getCube } = require('../controllers/cubes');
+const { getAllCubes, getCube, updateCube } = require('../controllers/cubes');
+const { getAccessories } = require('../controllers/accessories');
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
 
@@ -65,16 +66,31 @@ module.exports = (app) => {
 
         await accessory.save();
 
-        res.redirect('/create/accessory');
+        res.redirect(`/create/accessory`);
     })
 
     app.get('/attach/accessory/:id', async (req, res) => {
         const cube = await getCube(req.params.id)
+        const accessories = await getAccessories();
+
+        const canAttachAccessory = cube.accessories.length !== accessories.length && accessories.length > 0
 
         res.render('attachAccessory', {
             title: 'Attach accessory',
-            ...cube
+            ...cube,
+            accessories,
+            canAttachAccessory
         })
+    })
+
+    app.post('/attach/accessory/:id', async (req, res) => {
+        const {
+            accessory
+        } = req.body
+
+        await updateCube(req.params.id, accessory)
+
+        res.redirect(`/details/${req.params.id}`)
     })
 
 
