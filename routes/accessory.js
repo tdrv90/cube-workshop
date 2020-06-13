@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { getAccessories } = require('../controllers/accessories');
+const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
 const Accessory = require('../models/accessory');
 
 
