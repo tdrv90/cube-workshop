@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const { getAccessories } = require('../controllers/accessories');
+const { checkAuthentication } = require('../controllers/user')
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
 const Accessory = require('../models/accessory');
 
 
-router.get('/create/accessory', (req, res) => {
+router.get('/create/accessory', checkAuthentication, (req, res) => {
     res.render('createAccessory', {
         title: 'Create accessory'
     })
@@ -25,7 +26,7 @@ router.post('/create/accessory', async (req, res) => {
     res.redirect(`/create/accessory`);
 })
 
-router.get('/attach/accessory/:id', async (req, res) => {
+router.get('/attach/accessory/:id', checkAuthentication, async (req, res) => {
     const cube = await getCube(req.params.id);
     const accessories = await getAccessories();
 

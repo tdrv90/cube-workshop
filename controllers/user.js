@@ -1,10 +1,12 @@
+const env = process.env.NODE_ENV || 'development'
+const config = require('../config/config')[env]
+
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
-const privateKey = 'CUBE-WORKSHOP'
 const generateToken = data => {
-    const token = jwt.sign(data, privateKey)
+    const token = jwt.sign(data, config.privateKey)
 
     return token
 }
@@ -61,7 +63,24 @@ const verifyUser = async (req, res) => {
     return status;
 }
 
+const checkAuthentication = (req, res, next) => {
+    const token = req.cookies['autoid']
+
+    if (!token) {
+        res.redirect('/')
+    }
+
+    try {
+        const decodedObject = jwt.verify(token, config.privateKey)
+        console.log('decoded: ', decodedObject)
+        next()
+    } catch (error) {
+        res.redirect('/')
+    }
+}
+
 module.exports = {
     saveUser,
-    verifyUser
+    verifyUser,
+    checkAuthentication
 }

@@ -14,10 +14,6 @@ router.get('/signup', (req, res) => {
 router.post('/signup', async (req, res) => {
     const status = await saveUser(req, res)
 
-    if (status) {
-        res.redirect('/')
-    }
-
     res.redirect('/')
 })
 
