@@ -3,27 +3,33 @@ const config = require('../config/config')[env]
 
 const express = require('express')
 const router = express.Router()
-const { checkAuthentication } = require('../controllers/user')
+const { authAccess, getUserStatus, authAccessJSON } = require('../controllers/user')
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
 const Cube = require('../models/cube');
 const jwt = require('jsonwebtoken')
 
-
-router.get('/edit', (req, res) => {
-    res.render('editCubePage')
+router.get('/edit', authAccess, getUserStatus, (req, res) => {
+    res.render('editCubePage', {
+        isLoggedIn: req.isLoggedIn
+    })
 })
 
-router.get('/delete', (req, res) => {
-    res.render('deleteCubePage')
+router.get('/delete', authAccess, getUserStatus, (req, res) => {
+    res.render('deleteCubePage', {
+        isLoggedIn: req.isLoggedIn
+    })
 })
 
-router.get('/create', checkAuthentication, (req, res) => {
+router.get('/create', authAccess, (req, res) => {
     res.render('create', {
-        title: 'Create Cube'
+        title: 'Create Cube',
+        isLoggedIn: req.isLoggedIn
     });
+
+    console.log(authAccess);
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', getUserStatus, authAccessJSON, (req, res) => {
     const {
         name,
         description,
@@ -42,12 +48,13 @@ router.post('/create', (req, res) => {
     })
 })
 
-router.get('/details/:id', checkAuthentication, async (req, res) => {
+router.get('/details/:id', getUserStatus, async (req, res) => {
     const cube = await getCubeWithAccessories(req.params.id)
 
     res.render('details', {
         title: 'Cube Details',
-        ...cube
+        ...cube,
+        isLoggedIn: req.isLoggedIn
     });
 })
 
